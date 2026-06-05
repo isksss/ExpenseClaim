@@ -2,6 +2,7 @@
 node = "24"
 go = "1.26"
 pnpm = "latest"
+"oapi-codegen" = "2.7.0"
 "npm:playwright" = "latest"
 "npm:markdownlint-cli2" = "latest"
 "npm:oxlint" = "latest"
