@@ -1,0 +1,8 @@
+[tools]
+node = "24"
+go = "1.26"
+pnpm = "latest"
+"npm:playwright" = "latest"
+"npm:markdownlint-cli2" = "latest"
+"npm:oxlint" = "latest"
+"npm:oxfmt" = "latest"
