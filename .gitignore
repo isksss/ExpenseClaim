@@ -1,0 +1,46 @@
+# Node / pnpm
+node_modules/
+.pnpm-store/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Nuxt
+.nuxt/
+.output/
+.data/
+dist/
+
+# Go
+bin/
+*.test
+coverage.out
+
+# Test / coverage
+coverage/
+test-results/
+playwright-report/
+.playwright/
+storybook-static/
+
+# Build
+build/
+out/
+tmp/
+temp/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Uploads
+uploads/
+storage/uploads/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+.cursor/

@@ -1,0 +1,13 @@
+[tools]
+node = "24"
+go = "1.26"
+pnpm = "latest"
+"oapi-codegen" = "2.7.0"
+sqlc = "1.31.1"
+"aqua:pressly/goose" = "3.27.1"
+"actionlint" = "1.7.12"
+"npm:@redocly/cli" = "latest"
+"npm:playwright" = "latest"
+"npm:markdownlint-cli2" = "latest"
+"npm:oxlint" = "latest"
+"npm:oxfmt" = "latest"

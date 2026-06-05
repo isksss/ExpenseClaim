@@ -1,0 +1,30 @@
+{
+  "name": "frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "build-storybook": "storybook build",
+    "check": "nuxt typecheck",
+    "dev": "nuxt dev",
+    "generate:api-types": "openapi-typescript ../../packages/openapi/openapi.yaml -o app/types/openapi.d.ts",
+    "storybook": "storybook dev -p 6006"
+  },
+  "dependencies": {
+    "@nuxt/ui": "3.3.7",
+    "@pinia/nuxt": "latest",
+    "@vueuse/core": "latest",
+    "@vueuse/nuxt": "latest",
+    "nuxt": "3.21.7",
+    "pinia": "latest",
+    "vue": "latest",
+    "vue-router": "4.6.4"
+  },
+  "devDependencies": {
+    "@storybook-vue/nuxt": "latest",
+    "openapi-typescript": "latest",
+    "storybook": "latest",
+    "typescript": "latest",
+    "vue-tsc": "latest"
+  }
+}
