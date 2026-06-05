@@ -1,0 +1,17 @@
+{
+  "name": "expenseclaim",
+  "private": true,
+  "scripts": {
+    "format": "pnpm format:md && pnpm format:frontend && pnpm -r --if-present format",
+    "format:frontend": "sh scripts/run-frontend-tool.sh format",
+    "format:md": "markdownlint-cli2 --fix \"**/*.md\"",
+    "check": "pnpm lint:md && pnpm check:frontend && pnpm -r --if-present check",
+    "check:frontend": "sh scripts/run-frontend-tool.sh check",
+    "lint:frontend": "sh scripts/run-frontend-tool.sh lint",
+    "lint:md": "markdownlint-cli2 \"**/*.md\"",
+    "test": "pnpm -r --if-present test",
+    "build": "pnpm -r --if-present build",
+    "storybook": "pnpm -r --if-present storybook",
+    "playwright": "pnpm -r --if-present playwright"
+  }
+}
