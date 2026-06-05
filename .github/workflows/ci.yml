@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: lint test build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup mise
+        uses: jdx/mise-action@v2
+
+      - name: Install dependencies
+        run: mise exec -- pnpm install --frozen-lockfile
+
+      - name: Lint Markdown
+        run: mise exec -- pnpm lint:md
+
+      - name: Lint GitHub Actions workflows
+        run: mise exec -- pnpm lint:actions
+
+      - name: Validate OpenAPI
+        run: mise exec -- pnpm lint:openapi
+
+      - name: Lint frontend
+        run: mise exec -- pnpm lint:frontend
+
+      - name: Typecheck frontend
+        run: mise exec -- pnpm check:frontend
+
+      - name: Build frontend
+        run: mise exec -- pnpm --filter frontend build
+
+      - name: Generate backend API code
+        working-directory: apps/backend
+        run: mise exec -- make generate
+
+      - name: Generate backend DB code
+        working-directory: apps/backend
+        run: mise exec -- make generate-db
+
+      - name: Test backend
+        working-directory: apps/backend
+        run: mise exec -- go test ./...
+
+      - name: Build backend
+        working-directory: apps/backend
+        run: mise exec -- make build && mise exec -- make clean
