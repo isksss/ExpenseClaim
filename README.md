@@ -106,6 +106,39 @@ Nuxt / frontend は Oxlint と Oxfmt を使い、`pnpm format:frontend`、
 対象拡張子のファイルがない空の `apps/frontend` では no-op 成功になり、
 Nuxt app 実体が追加された後は Oxlint / Oxfmt が実行されます。
 
+## ローカル PostgreSQL と migration 検証
+
+ローカル開発用 PostgreSQL は Docker Compose で起動します。設定値は開発用の
+固定値であり、secret ではありません。接続文字列の例は `.env.example` を参照します。
+
+```sh
+docker compose up -d --wait postgres
+docker compose ps postgres
+```
+
+goose migration は `apps/backend` の Make target で実行します。
+
+```sh
+export DATABASE_URL='postgres://expenseclaim:expenseclaim@localhost:5432/expenseclaim?sslmode=disable'
+cd apps/backend
+mise exec -- make migrate-up
+mise exec -- make migrate-status
+mise exec -- make migrate-down
+mise exec -- make migrate-up
+```
+
+検証後に DB を止める場合は次を実行します。
+
+```sh
+docker compose down
+```
+
+初期状態から migration を再検証する場合は、volume も削除します。
+
+```sh
+docker compose down -v
+```
+
 ## Codex skills
 
 repo 専用 skill は `.agents/skills/` に配置します。
