@@ -162,6 +162,12 @@ repo 専用 skill は `.agents/skills/` に配置します。
 - コミットメッセージは英語 prefix と日本語本文で記述する。
   詳細は `.gitmessage` と `docs/git-workflow.md` を参照する。
 
+## Deploy 方針
+
+deploy 手順とリリース前後の確認観点は `docs/deployment.md` を参照します。
+現時点では hosting、production DB、secret 管理が未確定のため、実環境への
+deploy は別 issue で扱います。
+
 ## issue 管理
 
 issue ごとの作業内容は `issues/issue_{no}_{summary}.md` に記録します。
