@@ -97,21 +97,19 @@ VPS 上で migration を実行する場合は、`mise install` で `mise.toml` �
 
 ### 2. 配置
 
-VPS 上の配置先例を `/opt/expenseclaim` とする。初回は repository を clone し、
+VPS 上の配置先は `$HOME/ExpenseClaim` とする。初回は repository を clone し、
 2 回目以降は対象 branch または tag を fetch して checkout する。
 
 ```sh
-sudo mkdir -p /opt/expenseclaim
-sudo chown "$USER":"$USER" /opt/expenseclaim
-git clone <repository-url> /opt/expenseclaim
-cd /opt/expenseclaim
+git clone <repository-url> "$HOME/ExpenseClaim"
+cd "$HOME/ExpenseClaim"
 git checkout main
 ```
 
 既存配置を更新する場合は次を実行する。
 
 ```sh
-cd /opt/expenseclaim
+cd "$HOME/ExpenseClaim"
 git fetch --prune
 git checkout main
 git pull --ff-only
@@ -209,7 +207,7 @@ frontend から API を呼ぶ画面では、browser console に CORS error が�
 ### 9. 更新
 
 ```sh
-cd /opt/expenseclaim
+cd "$HOME/ExpenseClaim"
 git fetch --prune
 git checkout main
 git pull --ff-only
@@ -255,51 +253,13 @@ DB volume を削除すると保存済み data が消えるため、本番では 
 - application log に起動直後の error が出ていない。
 - 監視、alert、backup が期待どおりに動作している。
 
-## local から VPS へ Deploy
-
-local の clean な作業ツリーから IPv6 の VPS へ tracked files を同期し、
-VPS 上で Docker Compose deploy を実行する場合は `scripts/deploy-vps.sh` を使う。
-VPS 側の `.env` は事前に作成し、script では同期しない。
-同期時の `--delete` でも VPS 側の `.env` は保護する。
-
-local の repository root にある `.env` に deploy 接続情報を設定する。
-script は `.env` を shell として読み込まず、次の deploy 用 key だけを参照する。
-
-```sh
-DEPLOY_SSH_HOST=2001:db8::10
-DEPLOY_SSH_USER=deploy
-DEPLOY_SSH_PORT=22
-```
-
-deploy は次のように実行する。
-
-```sh
-scripts/deploy-vps.sh --migrate
-```
-
-`DEPLOY_SSH_HOST` は IPv6 address または hostname を指定する。
-`rsync` では IPv6 literal を `user@[addr]:path` として扱い、colon を
-path 区切りとして誤解釈しないようにする。
-`DEPLOY_SSH_PORT` を省略した場合は `22` を使う。
-
-利用できる option は次のとおり。
-
-- `--migrate`: `postgres` 起動後に VPS 上で `mise exec -- make migrate-up` を実行する。
-- `--skip-build`: `docker compose build backend frontend` を省略する。
-- `--dry-run`: rsync と remote command の実行内容を表示する。
-
-script は実 deploy 時に `git status --porcelain` が空でない場合に停止する。
-未コミット差分や未追跡ファイルを VPS に混ぜないため、deploy 前に
-commit 済みの clean な状態で実行する。`--dry-run` は dirty な作業ツリーでも
-実行内容の表示だけを行う。
-
 ## Rollback 方針
 
 rollback は、直前に安定していた `main` の commit または release tag へ戻す
 ことを基本方針にする。
 
 ```sh
-cd /opt/expenseclaim
+cd "$HOME/ExpenseClaim"
 git fetch --prune
 git checkout <stable-commit-or-tag>
 docker compose build backend frontend
