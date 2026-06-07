@@ -23,7 +23,7 @@ VPS への deploy 方針を、local から `rsync` する方式から VPS 上で
 ## 対象外
 
 - 実 VPS への deploy 実行
-- commit、push、Pull Request 作成
+- push、Pull Request 作成
 - Cloudflare Tunnel、Docker Compose service、migration の仕様変更
 - 過去 issue の履歴修正
 
@@ -66,3 +66,5 @@ git diff --check
 - `pnpm format:md`、`pnpm lint:md`、`git diff --check` が成功した。
 - 現行 docs / README / `.env.example` / `scripts` に `deploy-vps`、`DEPLOY_SSH`、
   `local から VPS`、`rsync`、`/opt/expenseclaim` の参照が残っていないことを確認した。
+- ユーザー追加指示により feature branch を作成し、commit 後に `develop` と `main` へ
+  fast-forward merge した。
