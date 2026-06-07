@@ -6,14 +6,12 @@
 - 推測より事実を優先し、不明点は明示する。
 - 既存実装と既存規約を尊重し、変更は要求範囲に限定する。
 - ユーザーの明示許可なしに commit、push、Pull Request 作成を行わない。
+  ただし `$expense-claim-workflow` を明示して依頼された場合は、
+  issue 作成から commit、feature branch への push、`develop` 向け
+  Pull Request 作成までの許可を含むものとして扱う。
 - commit メッセージには英語 prefix を利用し、本文は日本語で記述する。
 - Pull Request の本文は日本語で記述し、PR タイトルでも必要に応じて英語 prefix を利用する。
-
-## 行動記録
-
-- リポジトリに対する作業は devlog に記録する。
-- 記録には目的、変更内容、検証結果、残作業を含める。
-- 個人情報、秘密情報、認証情報、API Key、Token、Password、Credential は記録しない。
+- `main`、`develop` への direct push は行わない。
 
 ## Markdown
 
@@ -37,7 +35,7 @@
 - 作業対象外の issue や無関係ファイルは変更しない。
 - 実装中に発見したバグ、不具合、想定外の修正は現在の issue に含めない。
 - 追加対応が必要な場合は `/issues/issue_{no}_{summary}.md` を別途作成し、
-  別 `feature/issue-{no}-{summary}` ブランチ、別 `gwq` worktree で対応する。
+  別 `feature/issue-{no}-{summary}` ブランチで対応する。
 - 現在の issue の受け入れ条件を満たすために不可欠なごく小さい修正だけは、
   issue ファイルに理由を明記した上で同一 issue に含めてもよい。
 
@@ -77,11 +75,15 @@
 5. 実装 skill で issue 範囲に限定して変更する。
 6. 検証 skill で format、lint、test、build、`git diff --check` を確認する。
 7. レビュー skill で差分を確認し、必要なら実装と検証へ戻る。
-8. ユーザーが明示した場合のみ commit skill で commit する。
-9. ユーザーが明示した場合のみ push し、`gh pr create` で GitHub Pull Request を作成する。
+8. `$expense-claim-workflow` では commit skill で commit する。
+   単独作業では、ユーザーが明示した場合のみ commit する。
+9. `$expense-claim-workflow` では feature branch を push し、
+   `develop` 向けに `gh pr create` で GitHub Pull Request を作成する。
+   単独作業では、ユーザーが明示した場合のみ push と Pull Request 作成を行う。
 
 - Pull Request 作成後の merge は行わない。
-- 作業内容、検証結果、残作業は issue ファイルと devlog に記録する。
+- `main`、`develop` への direct push は行わない。
+- 作業内容、検証結果、残作業は issue ファイルに記録する。
 
 ## ディレクトリ構成
 
@@ -202,7 +204,6 @@ pnpm build
 - ブランチ運用は `docs/git-workflow.md` を参照する。
 - 開発統合ブランチは `develop` を利用する。
 - issue ごとに `feature/issue-{no}-{summary}` 形式のブランチを作成する。
-- 作業は `gwq` による worktree 分離を基本とする。
 - `develop` へ統合後、リリース可能な状態で `main` へ統合する。
 - GitHub Pull Request は `gh pr create` で作成する。
 - Pull Request 作成後の merge は行わない。

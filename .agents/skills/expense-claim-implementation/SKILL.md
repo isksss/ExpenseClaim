@@ -15,7 +15,7 @@ ExpenseClaim の実装担当として、指定された issue の範囲だけを
 - Nuxt / frontend は Oxlint と Oxfmt で lint / format する。
 - 実装中に発見したバグ、不具合、想定外の修正は現在の issue に混ぜない。
 - 追加対応が必要な場合は、別 issue、別 `feature/issue-{no}-{summary}` ブランチ、
-  別 `gwq` worktree で扱う。
+  別作業として扱う。
 - 現在の issue の受け入れ条件に不可欠なごく小さい修正だけは、
   issue ファイルに理由を明記して同一 issue に含めてもよい。
 - commit、push、Pull Request 作成は行わない。
