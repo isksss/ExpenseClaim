@@ -1,4 +1,4 @@
-# issue 19: sidebar click
+# issue 20: sidebar click
 
 ## 目的
 
@@ -57,6 +57,9 @@ git diff --check
 
 ## 完了結果
 
+- issue 番号重複整理のため、`issues/issue_19_sidebar_click.md` から
+  `issues/issue_20_sidebar_click.md` に rename した。
+- 見出しを `issue 20: sidebar click` に更新した。
 - `AppShell` のサイドバー項目に `id` と `title` を追加した。
 - `selectedNavigationId` によりクリックした項目を選択中として保持するようにした。
 - 選択中項目に応じて `color`、`variant`、`aria-current`、ヘッダー見出しが変わるようにした。
