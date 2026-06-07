@@ -255,6 +255,35 @@ DB volume を削除すると保存済み data が消えるため、本番では 
 - application log に起動直後の error が出ていない。
 - 監視、alert、backup が期待どおりに動作している。
 
+## local から VPS へ Deploy
+
+local の clean な作業ツリーから IPv6 の VPS へ tracked files を同期し、
+VPS 上で Docker Compose deploy を実行する場合は `scripts/deploy-vps.sh` を使う。
+VPS 側の `.env` は事前に作成し、script では同期しない。
+同期時の `--delete` でも VPS 側の `.env` は保護する。
+
+```sh
+export DEPLOY_SSH_HOST='2001:db8::10'
+export DEPLOY_SSH_USER='deploy'
+export DEPLOY_REMOTE_DIR='/opt/expenseclaim'
+scripts/deploy-vps.sh --migrate
+```
+
+`DEPLOY_SSH_HOST` は IPv6 address または hostname を指定する。
+`rsync` では IPv6 literal を `user@[addr]:path` として扱い、colon を
+path 区切りとして誤解釈しないようにする。
+
+利用できる option は次のとおり。
+
+- `--migrate`: `postgres` 起動後に VPS 上で `mise exec -- make migrate-up` を実行する。
+- `--skip-build`: `docker compose build backend frontend` を省略する。
+- `--dry-run`: rsync と remote command の実行内容を表示する。
+
+script は実 deploy 時に `git status --porcelain` が空でない場合に停止する。
+未コミット差分や未追跡ファイルを VPS に混ぜないため、deploy 前に
+commit 済みの clean な状態で実行する。`--dry-run` は dirty な作業ツリーでも
+実行内容の表示だけを行う。
+
 ## Rollback 方針
 
 rollback は、直前に安定していた `main` の commit または release tag へ戻す
