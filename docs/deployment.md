@@ -262,16 +262,25 @@ VPS 上で Docker Compose deploy を実行する場合は `scripts/deploy-vps.sh
 VPS 側の `.env` は事前に作成し、script では同期しない。
 同期時の `--delete` でも VPS 側の `.env` は保護する。
 
+local の repository root にある `.env` に deploy 接続情報を設定する。
+script は `.env` を shell として読み込まず、次の deploy 用 key だけを参照する。
+
 ```sh
-export DEPLOY_SSH_HOST='2001:db8::10'
-export DEPLOY_SSH_USER='deploy'
-export DEPLOY_REMOTE_DIR='/opt/expenseclaim'
+DEPLOY_SSH_HOST=2001:db8::10
+DEPLOY_SSH_USER=deploy
+DEPLOY_SSH_PORT=22
+```
+
+deploy は次のように実行する。
+
+```sh
 scripts/deploy-vps.sh --migrate
 ```
 
 `DEPLOY_SSH_HOST` は IPv6 address または hostname を指定する。
 `rsync` では IPv6 literal を `user@[addr]:path` として扱い、colon を
 path 区切りとして誤解釈しないようにする。
+`DEPLOY_SSH_PORT` を省略した場合は `22` を使う。
 
 利用できる option は次のとおり。
 
