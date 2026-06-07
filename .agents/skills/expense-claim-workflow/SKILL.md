@@ -14,9 +14,10 @@ ExpenseClaim の issue 単位作業を最初から Pull Request 作成まで進�
 - `issues/issue_{no}_{summary}.md` を作成または更新する。
 - `develop` から `feature/issue-{no}-{summary}` ブランチを作成する。
 - 既存 skill を順に使い、計画、実装、検証、レビューを分離して実行する。
-- 実装後、ユーザーが最後までの実施を明示している場合のみ commit、push、GitHub PR 作成まで行う。
+- `$expense-claim-workflow` の依頼は、commit、feature branch への push、
+  `develop` 向け GitHub PR 作成までの明示許可を含むものとして扱う。
 - PR 作成後の merge は行わない。
-- devlog に目的、変更内容、検証結果、残作業を記録する。
+- `main`、`develop` への direct push は行わない。
 
 ## 標準手順
 
@@ -33,14 +34,16 @@ ExpenseClaim の issue 単位作業を最初から Pull Request 作成まで進�
    - 対象外のバグ、不具合、想定外修正は別 issue に切り出す。
 
 3. ブランチ作成
-   - 原則として `develop` を起点にする。
-   - worktree 分離は次を基本にする。
+   - `develop` を起点にする。
+   - branch 作成は次を基本にする。
 
    ```sh
-   gwq add -b feature/issue-{no}-{summary} develop
+   git switch develop
+   git switch -c feature/issue-{no}-{summary}
    ```
 
-   - 既に対象ブランチや worktree がある場合は再利用可否を確認してから進める。
+   - 既に対象ブランチがある場合は再利用可否を確認してから進める。
+   - `main`、`develop` 上で直接作業しない。
 
 4. 計画
    - `.agents/skills/expense-claim-planning/SKILL.md` を使う。
@@ -62,14 +65,13 @@ ExpenseClaim の issue 単位作業を最初から Pull Request 作成まで進�
    - 指摘があれば実装へ戻り、再検証する。
 
 8. commit
-   - ユーザーが commit まで明示している場合のみ
-     `.agents/skills/expense-claim-commit/SKILL.md` を使う。
+   - `.agents/skills/expense-claim-commit/SKILL.md` を使う。
    - commit 前に secret、生成物、無関係変更が含まれないことを確認する。
 
 9. push と Pull Request
-   - ユーザーが push と PR 作成まで明示している場合のみ
-     `.agents/skills/expense-claim-create-pr/SKILL.md` を使う。
-   - GitHub PR は `gh` コマンドで作成する。
+   - `.agents/skills/expense-claim-create-pr/SKILL.md` を使う。
+   - feature branch だけを push し、`main`、`develop` へ direct push しない。
+   - GitHub PR は `gh` コマンドで作成し、base branch は `develop` に固定する。
    - PR 作成後も merge は行わない。
 
 ## 出力
@@ -77,5 +79,5 @@ ExpenseClaim の issue 単位作業を最初から Pull Request 作成まで進�
 - issue ファイルの場所。
 - 作成または利用したブランチ名。
 - 変更内容、検証結果、レビュー結果。
-- commit hash と PR URL。実施していない場合は未実施理由。
+- commit hash と PR URL。
 - 残作業、残リスク、追加 issue 候補。
