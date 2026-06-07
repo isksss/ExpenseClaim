@@ -15,12 +15,26 @@ const formatter = new Intl.NumberFormat("ja-JP", {
 });
 
 const navigationItems = [
-  { label: "ダッシュボード", icon: "i-lucide-layout-dashboard", active: true },
-  { label: "申請一覧", icon: "i-lucide-files" },
-  { label: "承認キュー", icon: "i-lucide-check-check" },
-  { label: "経理確認", icon: "i-lucide-receipt-text" },
-  { label: "設定", icon: "i-lucide-settings" },
-];
+  {
+    id: "dashboard",
+    label: "ダッシュボード",
+    title: "申請ダッシュボード",
+    icon: "i-lucide-layout-dashboard",
+  },
+  { id: "requests", label: "申請一覧", title: "申請一覧", icon: "i-lucide-files" },
+  { id: "approvals", label: "承認キュー", title: "承認キュー", icon: "i-lucide-check-check" },
+  { id: "accounting", label: "経理確認", title: "経理確認", icon: "i-lucide-receipt-text" },
+  { id: "settings", label: "設定", title: "設定", icon: "i-lucide-settings" },
+] as const;
+
+type NavigationItemId = (typeof navigationItems)[number]["id"];
+
+const selectedNavigationId = ref<NavigationItemId>("dashboard");
+
+const selectedNavigationItem = computed(
+  () =>
+    navigationItems.find((item) => item.id === selectedNavigationId.value) ?? navigationItems[0],
+);
 </script>
 
 <template>
@@ -42,12 +56,14 @@ const navigationItems = [
         <nav class="mt-6 grid gap-1">
           <UButton
             v-for="item in navigationItems"
-            :key="item.label"
-            :color="item.active ? 'primary' : 'neutral'"
+            :key="item.id"
+            :aria-current="selectedNavigationId === item.id ? 'page' : undefined"
+            :color="selectedNavigationId === item.id ? 'primary' : 'neutral'"
             :icon="item.icon"
-            :variant="item.active ? 'soft' : 'ghost'"
+            :variant="selectedNavigationId === item.id ? 'soft' : 'ghost'"
             block
             class="justify-start"
+            @click="selectedNavigationId = item.id"
           >
             {{ item.label }}
           </UButton>
@@ -60,7 +76,9 @@ const navigationItems = [
         >
           <div>
             <p class="text-sm text-slate-500">{{ currentPeriod }} 対象</p>
-            <h1 class="text-xl font-semibold tracking-normal">申請ダッシュボード</h1>
+            <h1 class="text-xl font-semibold tracking-normal">
+              {{ selectedNavigationItem.title }}
+            </h1>
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <UButton icon="i-lucide-filter" color="neutral" variant="outline"> 絞り込み </UButton>
