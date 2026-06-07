@@ -12,10 +12,11 @@
 
 ## issue ごとの作業
 
-issue ごとに `gwq` を使って worktree を分離します。
+issue ごとに `develop` から feature ブランチを作成します。
 
 ```sh
-gwq add -b feature/issue-{no}-{summary} develop
+git switch develop
+git switch -c feature/issue-{no}-{summary}
 ```
 
 作業内容は `issues/issue_{no}_{summary}.md` に記録します。
@@ -24,7 +25,7 @@ gwq add -b feature/issue-{no}-{summary} develop
 
 実装中に発見したバグ、不具合、想定外の修正は、現在の issue に混ぜません。
 追加対応が必要な場合は `/issues/issue_{no}_{summary}.md` を別途作成し、
-別 `feature/issue-{no}-{summary}` ブランチ、別 `gwq` worktree で対応します。
+別 `feature/issue-{no}-{summary}` ブランチで対応します。
 
 ただし、現在の issue の受け入れ条件を満たすために不可欠なごく小さい修正は、
 issue ファイルに理由を明記した上で同一 issue に含めてもよいです。
@@ -69,6 +70,10 @@ PR 本文は日本語で記述し、PR タイトルでも必要に応じて
 ## 注意事項
 
 - ユーザーの明示許可なしに commit、push、Pull Request 作成を行わない。
+  ただし `$expense-claim-workflow` を明示して依頼された場合は、
+  issue 作成から commit、feature branch への push、`develop` 向け
+  Pull Request 作成までの許可を含むものとして扱う。
+- `main`、`develop` への direct push は行わない。
 - 破壊的操作、force push、本番 deploy、secret 更新、package publish は
   事前に明示許可を得る。
 - 無関係なファイル変更を含めない。

@@ -24,7 +24,7 @@ repository 品質ルールを以下のように定義する。
 - issue の対象外ファイルは変更しない。
 - 実装中に発見したバグ、不具合、想定外修正は現在の issue に混ぜない。
 - 追加対応が必要な場合は、別 issue、別 `feature/issue-{no}-{summary}`
-  ブランチ、別 `gwq` worktree で扱う。
+  ブランチで扱う。
 
 ## Consequences
 
