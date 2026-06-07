@@ -5,12 +5,14 @@ usage() {
   cat >&2 <<'USAGE'
 usage: scripts/deploy-vps.sh [--migrate] [--skip-build] [--dry-run]
 
-Required environment:
+Required .env values:
   DEPLOY_SSH_HOST   IPv6 address or hostname of the VPS
   DEPLOY_SSH_USER   SSH user
 
-Optional environment:
+Optional .env values:
   DEPLOY_SSH_PORT   SSH port (default: 22)
+
+Optional environment:
   DEPLOY_REMOTE_DIR Remote deploy directory (default: /opt/expenseclaim)
   DEPLOY_COMPOSE    Compose command on VPS (default: docker compose)
 USAGE
@@ -28,6 +30,25 @@ shell_quote() {
 
 require_cmd() {
   command -v "$1" >/dev/null 2>&1 || die "$1 is required"
+}
+
+dotenv_value() {
+  key="$1"
+  value="$(sed -n "s/^[[:space:]]*\\(export[[:space:]]\\{1,\\}\\)\\{0,1\\}${key}[[:space:]]*=[[:space:]]*//p" "$dotenv_file" | tail -n 1)"
+  value="$(printf '%s' "$value" | sed 's/[[:space:]]*$//')"
+
+  case "$value" in
+    \"*\")
+      value="${value#\"}"
+      value="${value%\"}"
+      ;;
+    \'*\')
+      value="${value#\'}"
+      value="${value%\'}"
+      ;;
+  esac
+
+  printf '%s' "$value"
 }
 
 migrate=0
@@ -59,14 +80,21 @@ done
 
 require_cmd git
 
-deploy_host="${DEPLOY_SSH_HOST:-}"
-deploy_user="${DEPLOY_SSH_USER:-}"
-deploy_port="${DEPLOY_SSH_PORT:-22}"
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+dotenv_file="$repo_root/.env"
+[ -f "$dotenv_file" ] || die ".env is required"
+
+deploy_host="$(dotenv_value DEPLOY_SSH_HOST)"
+deploy_user="$(dotenv_value DEPLOY_SSH_USER)"
+deploy_port="$(dotenv_value DEPLOY_SSH_PORT)"
+[ -n "$deploy_port" ] || deploy_port="22"
 remote_dir="${DEPLOY_REMOTE_DIR:-/opt/expenseclaim}"
 compose_cmd="${DEPLOY_COMPOSE:-docker compose}"
 
-[ -n "$deploy_host" ] || die "DEPLOY_SSH_HOST is required"
-[ -n "$deploy_user" ] || die "DEPLOY_SSH_USER is required"
+[ -n "$deploy_host" ] || die "DEPLOY_SSH_HOST is required in .env"
+[ -n "$deploy_user" ] || die "DEPLOY_SSH_USER is required in .env"
 
 if [ "$dry_run" -eq 0 ]; then
   require_cmd ssh
@@ -84,9 +112,6 @@ case "$deploy_port" in
     die "DEPLOY_SSH_PORT must be numeric"
     ;;
 esac
-
-repo_root="$(git rev-parse --show-toplevel)"
-cd "$repo_root"
 
 dirty="$(git status --porcelain)"
 if [ -n "$dirty" ]; then
