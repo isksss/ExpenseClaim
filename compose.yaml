@@ -1,19 +1,72 @@
 services:
+  frontend:
+    build:
+      context: .
+      dockerfile: infra/docker/frontend.Dockerfile
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-3000}:3000"
+    environment:
+      NUXT_PUBLIC_API_BASE_URL: ${NUXT_PUBLIC_API_BASE_URL:-https://claim-api.isksss.dev}
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:3000 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: infra/docker/backend.Dockerfile
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-8080}:8080"
+    environment:
+      PORT: 8080
+      DATABASE_URL: ${DATABASE_URL:-postgres://expenseclaim:expenseclaim@postgres:5432/expenseclaim?sslmode=disable}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000,https://claim.isksss.dev}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8080/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    profiles:
+      - tunnel
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:-}
+    depends_on:
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
   postgres:
     image: postgres:17-alpine
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     environment:
-      POSTGRES_DB: expenseclaim
-      POSTGRES_USER: expenseclaim
-      POSTGRES_PASSWORD: expenseclaim
+      POSTGRES_DB: ${POSTGRES_DB:-expenseclaim}
+      POSTGRES_USER: ${POSTGRES_USER:-expenseclaim}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-expenseclaim}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U expenseclaim -d expenseclaim"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
 
 volumes:
   postgres-data:
