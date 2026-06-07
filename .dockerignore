@@ -1,0 +1,17 @@
+.git
+.github
+.agents
+.codex
+node_modules
+**/node_modules
+**/.nuxt
+**/.output
+**/dist
+**/bin
+coverage
+.env
+.env.*
+!.env.example
+*.log
+tmp
+temp

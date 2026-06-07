@@ -165,8 +165,9 @@ repo 専用 skill は `.agents/skills/` に配置します。
 ## Deploy 方針
 
 deploy 手順とリリース前後の確認観点は `docs/deployment.md` を参照します。
-現時点では hosting、production DB、secret 管理が未確定のため、実環境への
-deploy は別 issue で扱います。
+Docker Compose で frontend、backend、PostgreSQL を起動する構成と、
+Cloudflare Tunnel で `claim.isksss.dev` と `claim-api.isksss.dev` へ公開する
+手順を管理します。VPS 上の secret は `.env` で管理し、リポジトリには保存しません。
 
 ## issue 管理
 
